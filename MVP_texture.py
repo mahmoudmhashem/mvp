@@ -24,6 +24,12 @@ def draw_cube(canvas, cube_vertices):
         start, end = cube_vertices[edge[0]], cube_vertices[edge[1]]
         draw_line(canvas, start, end)
 
+def rotate_around_arbitraryacess():
+    M1 = get_model_matrix([1, 1, 1], [0, 0, -np.pi/3], [0, 0, 0])
+    M = get_model_matrix([1, 1, 1], [np.pi/24, 0, 0], [0, 0, 0])
+    M2 = get_model_matrix([1, 1, 1], [0, 0, np.pi/3], [0, 0, 0])
+    return M2@M@M1
+
 def main():
     width, height ,depth = 800, 600, 1000
     # canvas = tk.Canvas(root, width=width, height=height, bg="white")
@@ -34,22 +40,22 @@ def main():
     cube = get_cube()
     cube_H = get_homogeneous_matrix(cube)
 
-    M1 = get_model_matrix([1, 0.5, 0.5], [0, 0, np.pi/2], [0, 0, 0])
-    # M2 = get_model_matrix([1, 2, 1], [0, 0, 90], [10, 0, 0])
+    M1 = get_model_matrix([1, 0.5, 0.5], [0, 0, np.pi/3], [0, 0, 0])
+    arAccess = rotate_around_arbitraryacess()
+
 
     n=0.9; f=20
+    camPos = np.array([0, 0, -1])
+    V_R = get_view_matrix(camPos)
     P_R = get_perspective_matrix(n, f)
     O_R = get_orthographic_matrix(n, f, -2, 2, -2, 2)
 
-    camPos = np.array([0, 0, -1])
+    cube_H = M1@cube_H
     while True:
-        V_R = get_view_matrix(camPos) # , [0, 0, 0])
-        camPos = get_next_camPos(camPos, [0, np.pi/9, 0])
-        # camPos = get_next_camPos(camPos, [np.pi/9, 0, 0])
-
-        projected_cube_H_w = P_R@O_R@V_R@M1@cube_H
+        cube_H = arAccess@cube_H
+        projected_cube_H_w = P_R@O_R@V_R@cube_H
         projected_cube_H = projected_cube_H_w / projected_cube_H_w[-1]
-        # projected_cube_H = O_R@projected_cube_H
+
 
         projected_vertices_z = present_cube(projected_cube_H, width, height, depth, True, n, f, -2, 2, -2, 2)
         projected_vertices = present_cube(projected_cube_H, width, height, depth, False, n, f, -2, 2, -2, 2)
