@@ -30,7 +30,7 @@ def rotate_around_arbitraryacess():
     M2 = get_model_matrix([1, 1, 1], [0, 0, np.pi/3], [0, 0, 0])
     return M2@M@M1
 
-def main():
+def run():
     width, height ,depth = 800, 600, 1000
     # canvas = tk.Canvas(root, width=width, height=height, bg="white")
     canvas = np.ones((width, height, 3), dtype=np.uint8) * 255
